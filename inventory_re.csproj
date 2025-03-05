@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>inventory_re</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Models\View Model\" />
+    <None Remove="DAO\" />
+    <None Remove="Views\UserGroup\" />
+    <None Remove="Views\Auth\" />
+    <None Remove="Views\Tax\" />
+    <None Remove="Views\Unit\" />
+    <None Remove="Views\User\" />
+    <None Remove="Helper\" />
+    <None Remove="Views\Purchase\" />
+    <None Remove="Models\Common\" />
+    <None Remove="Views\Customer\" />
+    <None Remove="Views\ProductCategory\" />
+    <None Remove="Views\InventoryItem\" />
+    <None Remove="Views\Vendor\" />
+    <None Remove="Views\Sales\" />
+    <None Remove="Views\Profile\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\View Model\" />
+    <Folder Include="DAO\" />
+    <Folder Include="Views\UserGroup\" />
+    <Folder Include="Views\Auth\" />
+    <Folder Include="Views\Tax\" />
+    <Folder Include="Views\Unit\" />
+    <Folder Include="wwwroot\assets_old\" />
+    <Folder Include="Views\User\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Views\Purchase\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Models\Common\" />
+    <Folder Include="Views\Customer\" />
+    <Folder Include="Views\ProductCategory\" />
+    <Folder Include="Views\InventoryItem\" />
+    <Folder Include="Views\Vendor\" />
+    <Folder Include="Views\Sales\" />
+    <Folder Include="Views\Profile\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\assets_old\" />
+  </ItemGroup>
+</Project>

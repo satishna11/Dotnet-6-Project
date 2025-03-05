@@ -1,0 +1,61 @@
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/appsettings.Development.json
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/appsettings.json
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/inventory re.staticwebassets.runtime.json
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/inventory re
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/inventory re.deps.json
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/inventory re.runtimeconfig.json
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/inventory re.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/ref/inventory re.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/inventory re.pdb
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Humanizer.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.Data.SqlClient.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.Design.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.Relational.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.EntityFrameworkCore.SqlServer.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.Identity.Client.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.IdentityModel.Logging.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.IdentityModel.Protocols.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.IdentityModel.Tokens.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Microsoft.Win32.SystemEvents.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/Newtonsoft.Json.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.Configuration.ConfigurationManager.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.Drawing.Common.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.Runtime.Caching.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.Security.Cryptography.ProtectedData.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.Security.Permissions.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/System.Windows.Extensions.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/unix/lib/netcoreapp3.1/Microsoft.Data.SqlClient.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win/lib/netcoreapp3.1/Microsoft.Data.SqlClient.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win-arm/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win/lib/netcoreapp3.0/Microsoft.Win32.SystemEvents.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win/lib/netcoreapp3.0/System.Drawing.Common.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win/lib/netstandard2.0/System.Runtime.Caching.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/bin/Debug/net6.0/runtimes/win/lib/netcoreapp3.0/System.Windows.Extensions.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.csproj.AssemblyReference.cache
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.GeneratedMSBuildEditorConfig.editorconfig
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.AssemblyInfoInputs.cache
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.AssemblyInfo.cs
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.csproj.CoreCompileInputs.cache
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.MvcApplicationPartsAssemblyInfo.cache
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.RazorAssemblyInfo.cache
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.RazorAssemblyInfo.cs
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/staticwebassets.build.json
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/staticwebassets.development.json
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/scopedcss/Views/Shared/_Layout.cshtml.rz.scp.css
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/scopedcss/bundle/inventory re.styles.css
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/scopedcss/projectbundle/inventory re.bundle.scp.css
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.csproj.CopyComplete
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/ref/inventory re.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.pdb
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory re.genruntimeconfig.cache

@@ -1,0 +1,433 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_layout";
+}
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="col-md-3">
+                        <label>User Name</label><br />
+                        <input type="text" class="form-control txtUserfilterName" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>UserGroup Id</label><br />
+                        <input type="text" class="form-control txtUserGroupfilterId" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Contact No.</label><br />
+                        <input type="text" class="form-control txtContactfilterNo" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <button type="button" class="btn btn-primary btnSearch ml-2 mt-2" style="float:right;">
+                            <i class="fa fa-search"></i> SEARCH
+                        </button>
+
+                        <button type="button" class="btn btn-success btnNew mt-2" style="float:right; ">
+                            <i class="fa fa-plus"></i> NEW
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">S.N.</th>
+
+                                <th scope="col">User Name</th>
+                                <th scope="col"> UserGroup Id</th>
+                                <th scope="col">Contact No.</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="data-body">
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">User Setup Page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-group col-12">
+                                    <label for="frist_name">Fullname</label>
+                                    <input type="text" class="form-control txtFullname" name="frist_name" autofocus>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="Contact">Contact</label>
+                                        <input type="text" class="form-control txtContact" name="Contact">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="frist_name">Email</label>
+                                        <input type="text" class="form-control txtEmail" name="frist_name" autofocus>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <label for="last_name">Username</label>
+                                    <input type="text" class="form-control txtUsername" name="last_name">
+                                    <input type="hidden" class="hdnUserID" value="0" />
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label for="frist_name">User Group</label>
+                                    <select class="form-control ddlUserGroup">
+                                    </select>
+                                </div>
+                            </div>
+                            
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="password" class="d-block">Password</label>
+                                        <input type="password" class="form-control pwstrength txtPassword" data-indicator="pwindicator"
+                                               name="password">
+                                        <div class="pwindicator">
+                                            <div class="bar"></div>
+                                            <div class="label"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="password2" class="d-block">Password Confirmation</label>
+                                        <input type="password" class="form-control txtConfirmPassword" name="password-confirm">
+                                    </div>
+                                </div>
+                          
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="agree" class="custom-control-input chkAgree" id="agree">
+                                    <label class="custom-control-label" for="agree">I agree with the terms and conditions</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-primary btn-lg btn-block btnRegister">
+                                    Register
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+   
+</body>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadData();
+            loadDropDown();
+        });
+
+        function loadDropDown() {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "UserGroup")',
+
+                success: function (res) {
+                    debugger;
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value="' + x.userGroupID + '">' + x.userGroupName + '</option>';
+                    });
+                    $('.ddlUserGroup').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    // block ui
+                    //$.blockUI();
+                },
+                complete: function () {
+                    // unblock ui
+                    //$.unblockUI();
+                }
+            });
+        }
+
+        function loadData() {
+            var UserName = $('.txtUserfilterName').val() || '';
+            var UserGroupId = $('.txtUserGroupfilterId').val() || '';
+            var UserContact = $('.txtContactfilterNo').val() || '';
+
+              $.ajax({
+                  contentType: "application/json; charset=utf-8",
+                  method: 'get',
+
+                  url: '@Url.Action("GetData","User")?&UsrName=' + UserName + '&UsrGroupId=' + UserGroupId + '&UsrContact=' + UserContact,
+                  success: function (res) {
+                      debugger;
+                        var dt = '';
+                        $.each(res, function (i, x) {
+                            dt += '<tr>';
+                            dt += '<td>' + (i + 1) + '</td>';
+
+                            dt += '<td>' + x.username + '</td>';
+                            dt += '<td>' + x.userGroupID + '</td>';
+                            dt += '<td>' + x.contactNo + '</td>';
+                            dt += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key="' + x.userID + '"><i class="fa fa-edit"></i> EDIT</button>';
+
+                            dt += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key="' + x.userID + '"> <i class="fa fa-trash"></i> DELETE</button ></td > ';
+                            dt += '</tr>';
+                        });
+
+                        $('.data-body').html(dt);
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+                });
+        }
+        $(document).on('click', '.btnRegister', function () {
+            var obj = {
+                userID: $('.hdnUserID').val(),
+                fullname: $('.txtFullname').val(),
+                contactNo: $('.txtContact').val(),
+                email: $('.txtEmail').val(),
+                userGroupID: +$('.ddlUserGroup').val(),
+                username: $('.txtUsername').val(),
+                password: $('.txtPassword').val(),
+                confirmPassword: $('.txtConfirmPassword').val(),
+                agree: $('.chkAgree').is(':checked')
+            }
+
+            if (obj.fullname == '') {
+                toastr["error"]("Please enter your full name", "Alert")
+            } else if (obj.userGroupID == '' || obj.userGroupID == '0') {
+
+                toastr["error"]("Please select User Group", "Alert")
+            } else if (obj.contactNo == '') {
+                alert('Enter Contact No')
+                toastr["error"]("Please select User Group", "Alert")
+            } else if (obj.username == '') {
+
+                toastr["error"]("Please select Name", "Alert")
+            } else if (obj.email == '') {
+
+                toastr["error"]("Please Enter Email ", "Alert")
+            } else if (obj.password == '') {
+
+                toastr["error"]("Please Enter Password", "Alert")
+            } else if (obj.confirmPassword == '') {
+
+                toastr["error"]("Please Enter confirmPassword", "Alert")
+            } else if (!obj.agree) {
+
+                toastr["error"]("Please Agree terms & condition to proceed!", "Alert")
+            } else if (obj.password != obj.confirmPassword) {
+                toastr["error"]("Please Password Not Matched", "Alert")
+            }
+            else {
+               $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'Post',
+                   url: '@Url.Action("RegisterNewUser", "Auth")',
+                   data: JSON.stringify(obj),
+                    success: function (res) {
+                        if (res.success) {
+                            alert(res.message)
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+                        } else {
+                            alert(res.message);
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        //$.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        //$.unblockUI();
+                    }
+                });
+            }
+        });
+        
+        function clearForm() {
+            $('.txtFullname').val('');
+            $('.txtContact').val('');
+            $('.txtEmail').val('');
+            $('.txtUsername').val('');
+            $('.txtPassword').val('');
+            $('.txtConfirmPassword').val('');
+
+            $('.hdnUserID').val('0');
+        }
+         $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data('key');
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetByID", "User")?id='+id,
+
+                success: function (res) {
+                    debugger;
+                    if (res.success) {
+                        $('#exampleModal').modal('show');
+                        
+                        $('.txtFullname').val(res.data.fullname);
+                        $('.txtContact').val(res.data.contactNo);
+                        $('.txtEmail').val(res.data.email);
+                        $('.txtUsername').val(res.data.username);
+                        $('.txtPassword').val(res.data.password);
+                        $('.txtConfirmPassword').val(res.data.password);
+
+                        $('.hdnUserID').val(res.data.userID);
+                        $('.ddlUserGroup').val(res.data.userGroupID);
+                    } else {
+                        toastr("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        });
+         @*<!--$(document).on('click', '.btnEdit', function () {
+    //var btn = $(this);
+    //var id = $(this).data('key');
+             }
+
+    $.ajax({
+        contentType: "application/json; charset=utf-8",
+        method: 'POST', // Change method to 'POST'
+        url: '@Url.Action("GetByID", "User")',
+        //data: JSON.stringify({ id: id }), // Pass the id in the request body as JSON
+        data: JSON.stringify(obj),
+        success: function (res) {
+
+            if (res.success) {
+                $('#exampleModal').modal('show');
+                $('.txtFullname').val(res.data.fullname);
+                $('.txtContact').val(res.data.contactNo);
+                $('.txtEmail').val(res.data.email);
+                $('.txtUsername').val(res.data.username);
+                $('.txtPassword').val(res.data.password);
+                $('.txtConfirmPassword').val(res.data.confirmPassword);
+                $('.hdnUserID').val(res.data.userID);
+                $('.ddlUserGroup').val(res.data.userGroupID);
+            } else {
+                //toastr("!!!", res.message, "error");
+                alert('error');
+            }
+        },
+        error: function (e) {
+            console.log(e);
+        },
+        beforeSend: function () {
+            $.blockUI();
+        },
+        complete: function () {
+            $.unblockUI();
+        }
+    });
+});-->*@
+
+
+        $(document).on('click', '.btnNew', function () {
+            $('#exampleModal').modal('show')
+          
+        });
+
+        $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+
+
+
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: () => {
+                        var id= $(btn).data('key')
+                        deleteData(id);
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+
+
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "User")?UsrID='+ id,
+                success: function (res) {
+                    if (res.success) {
+                        //toastr("!!!", res.message, "success");
+                        alert("delete");
+                        loadData();
+                    }
+                    //} else {
+                    //    toastr("!!!", res.message, "error");
+                    //}
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+
+        $(document).on('click', '.btnSearch', function () {
+            loadData();
+        });
+
+    </script>
+}

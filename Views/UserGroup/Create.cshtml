@@ -1,0 +1,306 @@
+﻿
+@{
+    Layout = "_layout";
+}
+
+
+@section Header{
+    <style>
+        .grn {
+            color: green
+        }
+    </style>
+}
+
+<div class="row">
+    
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>User Group Name</label><br />
+                        <input type="text" class="form-control txtFilterUserGroupName" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>User Group Code</label><br />
+                        <input type="text" class="form-control txtFilterUserGroupCode" />
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <button type="button" class="btn btn-primary btnSearch ml-2" style="float:right;">
+                            <i class="fa fa-search"></i> SEARCH
+                        </button>
+                        <button type="button" class="btn btn-success btnNew" style="float:right;">
+                            <i class="fa fa-plus"></i> NEW
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table class="table table-hover dtTable">
+                    <thead>
+                        <tr>
+                            <th>SN</th>
+                            <th>User Group Name</th>
+                            <th>User Group Code</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="data-body">
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">User Group Setup Page</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form">
+                                <label>User Group Name</label>
+                                <input type="text" class="form-control txtUserGroupName" />
+                                <input type="hidden" class="hdnUserGroupID" value="0" />
+                            </div>
+                            <div class="form">
+                                <label>User Group Code</label>
+                                <input type="text" class="form-control txtUserGroupCode" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
+                <button type="button" class="btn btn-danger btnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //$('.dtTable').DataTable();
+            loadData();
+
+        });
+
+        $(document).on('click', '.btnNew', function () {
+            $('#exampleModal').modal('show')
+        });
+
+
+        $(document).on('click', '#btnSubmit', function () {
+            var ugName = $('.txtUserGroupName').val();
+            var ugCode = $('.txtUserGroupCode').val();
+            var id = $('.hdnUserGroupID').val();
+
+            if (ugName == '') {
+                toastr["error"]("Enter User Group Name", "!!!")
+            } else if (ugCode == '') {
+                toastr["error"]("Enter User Group Code", "!!!")
+            } else {
+                // send data from UI to C# via ajax call
+
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'get',
+                    url: '@Url.Action("SaveData", "UserGroup")?id='+id+'&groupname=' + ugName + '&groupcode=' + ugCode,
+                    success: function (res) {
+                        if (res.success) {
+                            showToast("!!!", res.message, "success");
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+
+                            loadData();
+                        } else {
+                            showToast("!!!", res.message, "error");
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+                });
+            }
+        })
+
+
+        $(document).on('click', '.btnCancel', function () {
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to clear form?',
+                buttons: {
+                    confirm: function () {
+                        clearForm();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+
+        function clearForm() {
+            $('.txtUserGroupName').val('')
+            $('.txtUserGroupCode').val('')
+            $('.hdnUserGroupID').val('0')
+        }
+
+        function loadData() {
+            var grpName = $('.txtFilterUserGroupName').val() || '';
+            var grpCode = $('.txtFilterUserGroupCode').val() || '';
+
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "UserGroup")?groupName=' + grpName + '&groupCode=' + grpCode,
+                success: function (res) {
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<tr>';
+                        xyz += '<td>' + (i + 1) + '</td>';
+                        xyz += '<td>' + x.userGroupName + '</td>';
+                        xyz += '<td>' + x.userGroupCode + '</td>';
+                        xyz += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key="' + x.userGroupID +'"><i class="fa fa-edit"></i> EDIT</button>';
+                        xyz += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key="'+x.userGroupID+'"> <i class="fa fa-trash"></i> DELETE</button ></td > ';
+                        xyz += '</tr>';
+                    });
+
+                    $('.data-body').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+        $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+
+
+
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: () => {
+                        var id = $(btn).data('key')
+                        deleteData(id);
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+
+
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "UserGroup")?userGroupID='+id,
+                success: function (res) {
+                    if (res.success) {
+                        showToast("!!!", res.message, "success");
+                        loadData();
+
+                    } else {
+                        showToast("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+
+        $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data('key');
+
+
+
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetByID", "UserGroup")?id='+id,
+                success: function (res) {
+                    if (res.success) {
+                         $('#exampleModal').modal('show');
+                         $('.txtUserGroupName').val(res.data.userGroupName);
+                        $('.txtUserGroupCode').val(res.data.userGroupCode);
+                        $('.hdnUserGroupID').val(res.data.userGroupID);
+                    } else {
+                        showToast("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        });
+
+        $(document).on('click', '.btnSearch', function () {
+            loadData();
+        })
+
+
+    </script>
+}
+
+
+

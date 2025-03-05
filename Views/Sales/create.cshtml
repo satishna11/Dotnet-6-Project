@@ -1,0 +1,344 @@
+﻿
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>Customer</label>
+                        <select class="form-control ddlCustomer">
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Reference No</label>
+                        <input type="text" class="form-control txtReferenceNo" />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Transaction Date</label>
+                        <input type="date" class="form-control txtTransactionDate" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover setupTable">
+                    <thead>
+                        <tr>
+                            <th>Inv Items</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Rate</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="body-item"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <select class="form-control ddlSetupItem">
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control txtSetupQuantity" />
+                            </td>
+                            <td>
+                                <select class="form-control ddlSetupUnit">
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control txtSetupRate" />
+                            </td>
+                            <td>
+                                <input type="number" disabled="disabled" class="form-control txtSetupTotal" />
+                            </td>
+                            <td>
+                                <button class="btn btn-xs btn-success btnSetupAdd">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <label>Narration</label>
+                <textarea class="form-control txtNarration"></textarea>
+                <br />
+                <button class="btn btn-success btnSubmit">
+                    <i class="fa fa-save"></i> Submit
+                </button>
+                <button class="btn btn-danger btnCancel">
+                    <i class="fa fa-trash"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="totalInfo"></h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadDDL();
+        });
+
+        $(document).on('click', '.btnSetupAdd', function () {
+            var obj = {
+                InventoryItemID: $('.ddlSetupItem').val() || 0,
+                Quantity: $('.txtSetupQuantity').val() || 0,
+                Unit: $('.ddlSetupUnit').val() || 0,
+                Rate: $('.txtSetupRate').val() || 0,
+                Total: $('.txtSetupTotal').val() || 0,
+            };
+
+            if (!obj.InventoryItemID || obj.InventoryItemID == '' || obj.InventoryItemID == '0') {
+                toastr["error"]("Select Inventory Item", "!!!")
+            } else if (!obj.Quantity || obj.Quantity == '' || obj.Quantity == '0') {
+                toastr["error"]("Enter Quantity", "!!!")
+            } else if (!obj.Unit || obj.Unit == '' || obj.Unit == '0') {
+                toastr["error"]("Select Unit", "!!!")
+            } else if (!obj.Rate || obj.Rate == '' || obj.Rate == '0') {
+                toastr["error"]("Enter Rate", "!!!")
+            } else if (!obj.Total || obj.Total == '' || obj.Total == '0') {
+                toastr["error"]("Invalid Total Amount", "!!!")
+            } else {
+
+                var unitName = $('.ddlSetupUnit option[value=' + obj.Unit + ']').data('dispname');
+                var itemName = $('.ddlSetupItem option[value=' + obj.InventoryItemID + ']').data('dispname');
+
+                var xyz = '';
+                xyz += '<tr>';
+                xyz += '<td class="tdItemName" data-key=' + obj.InventoryItemID + '>' + itemName + '</td>';
+                xyz += '<td class="tdQuantity">' + obj.Quantity + '</td>';
+                xyz += '<td class="tdUnitName" data-key=' + obj.Unit + '>' + unitName + '</td>';
+                xyz += '<td class="tdRate">' + obj.Rate + '</td>';
+                xyz += '<td class="tdTotal">' + obj.Total + '</td>';
+                xyz += '<td><button class="btn btn-danger btn-xs btnRoDelete"><i class="fa fa-trash"></i></button></td>';
+                xyz += '</tr>';
+
+                $('.body-item').append(xyz);
+
+                clearSetupForm();
+                calculateAllTotal()
+
+            }
+        });
+
+        $(document).on('change', '.txtSetupQuantity , .txtSetupRate', function () {
+            calculateRoTotal();
+        });
+
+        $(document).on('click', '.btnRoDelete', function () {
+            var btn = $(this);
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to remove item ?',
+                buttons: {
+                    confirm: function () {
+                        $(btn).closest('tr').remove();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+
+        });
+
+        function calculateRoTotal() {
+            var obj = {
+                Quantity: +($('.txtSetupQuantity').val() || 0),
+                Rate: +($('.txtSetupRate').val() || 0),
+            };
+
+            var roTotal = obj.Quantity * obj.Rate;
+            $('.txtSetupTotal').val(roTotal);
+        }
+        function clearSetupForm() {
+            $('.ddlSetupItem').val('')
+            $('.txtSetupQuantity').val('')
+            $('.ddlSetupUnit').val('')
+            $('.txtSetupRate').val('')
+            $('.txtSetupTotal').val('')
+        }
+
+
+        function loadDDL() {
+            //load inventory item
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "InventoryItem")',
+                success: function (res) {
+                    var xyz = '<option value="0">--select--</option>';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value="' + x.inventoryItemsId + '" data-dispname="' + x.itemName + '">' + x.itemName + '</option>';
+                    });
+
+                    $('.ddlSetupItem').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+
+            //load UNIT
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "Unit")',
+                success: function (response) {
+                    var res = JSON.parse(response.message);
+                    var xyz = '<option value="0">--select--</option>';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value="' + x.UnitID + '" data-dispname="' + x.UnitName + '">' + x.UnitName + '</option>';
+                    });
+
+                    $('.ddlSetupUnit').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+            //load Customer
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "Customer")',
+                success: function (res) {
+                    var xyz = '<option value="0">--select--</option>';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value="' + x.customerId + '" data-dispname="' + x.fullName + '">' + x.fullName + '</option>';
+                    });
+
+                    $('.ddlCustomer').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+
+        }
+        function calculateAllTotal() {
+            var total = 0;
+
+            $('.setupTable tbody tr').each(function () {
+
+                var amount = parseInt($(this).find('.tdTotal').text())
+                if (!isNaN(amount)) {
+                    total += amount;
+                }
+                $('.totalInfo').text('Total :' + total);
+            })
+        }
+        $(document).on('click', '.btnCancel', function () {
+
+            window.location.href = '@Url.Action("Index", "Sales")'
+        })
+
+    </script>
+
+
+
+
+    <script>
+            $(document).on('click', '.btnSubmit', function () {
+                var customerID = $('.ddlCustomer').val(); // Fetch value from dropdown
+                var mast = {
+                    CustomerID: !customerID || isNaN(customerID) || customerID === '' ? 0 : +customerID, // Handle undefined, null, NaN, and empty string
+                    ReferenceNo: $('.txtReferenceNo').val() || '',
+                    TransactionDate: $('.txtTransactionDate').val() || '',
+                    Narration: $('.txtNarration').val() || ''
+                };
+
+
+    var dtl = [];
+    var allTr = $('.body-item tr');
+    $.each(allTr, function (i, ro) {
+        var obj = {
+            InventoryItemID: $($(ro).find('.tdItemName')).data('key'),
+            Quantity: +($($(ro).find('.tdQuantity')).html()),
+            UnitID: +($($(ro).find('.tdUnitName')).data('key')),
+            Rate: +($($(ro).find('.tdRate')).html())
+        };
+
+        dtl.push(obj);
+    });
+
+    mast['Detail'] = dtl;
+
+    $.ajax({
+        contentType: "application/json; charset=utf-8",
+        method: 'post',
+        url: '@Url.Action("SaveSales", "Sales")',
+        data: JSON.stringify(mast),
+        success: function (res) {
+            if (res.success) {
+                toastr["success"](res.message, "!!!");
+            } else {
+                toastr["error"](res.message, "!!!");
+            }
+        },
+        error: function (e) {
+            console.log(e);
+        },
+        beforeSend: function () {
+            $.blockUI();
+        },
+        complete: function () {
+            $.unblockUI();
+        }
+    });
+});
+
+
+    </script>
+    }

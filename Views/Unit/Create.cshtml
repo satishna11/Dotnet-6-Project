@@ -1,0 +1,303 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_layout";
+}
+<body>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Unit Name</label><br />
+                        <input type="text" class="form-control txtFilterUnitName" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Unit Code</label><br />
+                        <input type="text" class="form-control txtFilterUnitCode" />
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <button type="button" class="btn btn-primary btnSearch ml-2" style="float:right;">
+                            <i class="fa fa-search"></i> SEARCH
+                        </button>
+                        <button type="button" class="btn btn-success btnNew" style="float:right;">
+                            <i class="fa fa-plus"></i> NEW
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table class="table table-hover dtTable">
+                    <thead>
+                        <tr>
+                            <th>SN</th>
+                            <th>Unit Name</th>
+                            <th>Unit Code</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="data-body">
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Unit Setup Page</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form">
+                                <label>Unit Name</label>
+                                <input type="text" class="form-control txtUnitName" />
+                                <input type="hidden" class="hdnUnitID" value="0" />
+                            </div>
+                            <div class="form">
+                                <label>Unit Code</label>
+                                <input type="text" class="form-control txtUnitCode" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
+                <button type="button" class="btn btn-danger btnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            //$('.dtTable').DataTable();
+            loadData();
+
+        });
+
+        $(document).on('click', '.btnNew', function () {
+            debugger;
+            $('#exampleModal').modal('show')
+        });
+
+
+        $(document).on('click', '#btnSubmit', function () {
+            var ugName = $('.txtUnitName').val();
+            var ugCode = $('.txtUnitCode').val();
+            var id = $('.hdnUnitID').val();
+
+            if (ugName == '') {
+                toastr["error"]("Enter Unit Name", "!!!")
+            } else if (ugCode == '') {
+                toastr["error"]("Enter Unit Code", "!!!")
+            } else {
+                // send data from UI to C# via ajax call
+
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'get',
+                    url: '@Url.Action("SaveData", "Unit")?id='+id+'&unitName=' + ugName + '&unitCode=' + ugCode,
+                    success: function (res) {
+                        if (res.success) {
+                            debugger;
+                            toastr.success(res.message, "!!!");
+
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+
+                            loadData();
+                        } else {
+                            showToast("!!!", res.message, "error");
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+                });
+            }
+        })
+
+
+        $(document).on('click', '.btnCancel', function () {
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to clear form?',
+                buttons: {
+                    confirm: function () {
+                        clearForm();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+
+        function clearForm() {
+            $('.txtUnitName').val('')
+            $('.txtUnitCode').val('')
+            $('.hdnUnitID').val('0')
+        }
+
+        function loadData() {
+            var grpName = $('.txtFilterUnitName').val() || '';
+            var grpCode = $('.txtFilterUnitCode').val() || '';
+
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "Unit")?unitName=' + grpName + '&unitCode=' + grpCode,
+                success: function (dta) {
+                    var res = JSON.parse(dta.message)
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<tr>';
+                        xyz += '<td>' + (i + 1) + '</td>';
+                        xyz += '<td>' + x.UnitName + '</td>';
+                        xyz += '<td>' + x.UnitCode + '</td>';
+                        xyz += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key="' + x.UnitID +'"><i class="fa fa-edit"></i> EDIT</button>';
+                        xyz += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key="'+x.UnitID+'"> <i class="fa fa-trash"></i> DELETE</button ></td > ';
+                        xyz += '</tr>';
+                    });
+
+
+                    $('.data-body').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+        $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+
+
+
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: () => {
+                        var id = $(btn).data('key')
+                        deleteData(id);
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+
+
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "Unit")?UnitID='+id,
+                success: function (res) {
+                    if (res.success) {
+                        showToast("!!!", res.message, "success");
+                        loadData();
+
+                    } else {
+                        showToast("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+
+        $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data('key');
+
+
+
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetByID", "Unit")?id='+id,
+                success: function (res) {
+                    if (res.success) {
+                         $('#exampleModal').modal('show');
+                         $('.txtUnitName').val(res.data.UnitName);
+                        $('.txtUnitCode').val(res.data.UnitCode);
+                        $('.hdnUnitID').val(res.data.UnitID);
+                    } else {
+                        showToast("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        });
+
+        $(document).on('click', '.btnSearch', function () {
+            loadData();
+        })
+
+
+    </script>
+}
+
+
+

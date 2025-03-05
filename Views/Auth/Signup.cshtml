@@ -1,0 +1,218 @@
+﻿@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Otika - Admin Dashboard Template</title>
+    <link rel="stylesheet" href="~/assets/css/app.min.css">
+    <link rel="stylesheet" href="~/assets/bundles/jquery-selectric/selectric.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="~/assets/css/components.css">
+    <link rel="stylesheet" href="~/assets/css/custom.css">
+    <link rel='shortcut icon' type='image/x-icon' href='~/assets/img/favicon.ico' />
+</head>
+
+<body>
+    <div class="loader"></div>
+    <div id="app">
+        <section class="section">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h4>Register</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-12">
+                                        <label for="frist_name">Fullname</label>
+                                        <input type="text" class="form-control txtFullname" name="frist_name" autofocus>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="last_name">Contact</label>
+                                        <input type="text" class="form-control txtContact" name="last_name">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="frist_name">Email</label>
+                                        <input type="text" class="form-control txtEmail" name="frist_name" autofocus>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="last_name">Username</label>
+                                        <input type="text" class="form-control txtUsername" name="last_name">
+                                    </div>
+
+                                    <div class="form-group col-6">
+                                        <label for="frist_name">User Group</label>
+                                        <select class="form-control ddlUserGroup">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="password" class="d-block">Password</label>
+                                        <input type="password" class="form-control pwstrength txtPassword" data-indicator="pwindicator"
+                                               name="password">
+                                        <div class="pwindicator">
+                                            <div class="bar"></div>
+                                            <div class="label"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="password2" class="d-block">Password Confirmation</label>
+                                        <input type="password" class="form-control txtConfirmPassword" name="password-confirm">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" name="agree" class="custom-control-input chkAgree" id="agree">
+                                        <label class="custom-control-label" for="agree">I agree with the terms and conditions</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary btn-lg btn-block btnRegister">
+                                        Register
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-4 text-muted text-center">
+                                Already Registered? <a href="@Url.Action("Login","Auth")">Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="~/assets/js/app.min.js"></script>
+    <script src="~/assets/bundles/jquery-pwstrength/jquery.pwstrength.min.js"></script>
+    <script src="~/assets/bundles/jquery-selectric/jquery.selectric.min.js"></script>
+    <script src="~/assets/js/page/auth-register.js"></script>
+    <script src="~/assets/js/scripts.js"></script>
+    <script src="~/assets/js/custom.js"></script>
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>*@
+
+    @*var test = {"fullname":"ramesh","email":"ramesh@gmail.com"}    -- valid JSON
+        var str = JSON.stringify(test)   -- convert json to string
+        var test2 = JSON.parse(str)    --convert string to json
+    *@
+
+
+    <script>
+        $(document).ready(function () {
+            loadDropDown();
+        });
+
+
+        $(document).on('click', '.btnRegister', function () {
+            var obj = {
+                fullname: $('.txtFullname').val(),
+                contactNo: $('.txtContact').val(),
+                email: $('.txtEmail').val(),
+                userGroupID: +$('.ddlUserGroup').val(),
+                username: $('.txtUsername').val(),
+                password: $('.txtPassword').val(),
+                confirmPassword: $('.txtConfirmPassword').val(),
+                agree: $('.chkAgree').is(':checked')
+            }
+
+            if (obj.fullname == '') {
+                alert('Enter fullname')
+            } else if (obj.userGroupID == '' || obj.userGroupID == '0') {
+                alert('Select User Group')
+            } else if (obj.contactNo == '') {
+                alert('Enter Contact No')
+            } else if (obj.username == '') {
+                alert('Enter Username')
+            } else if (obj.email == '') {
+                alert('Enter Email')
+            } else if (obj.password == '') {
+                alert('Enter Password')
+            } else if (obj.confirmPassword == '') {
+                alert('Enter confirmPassword')
+            } else if (!obj.agree) {
+                alert('Agree terms & condition to proceed!')
+            } else if (obj.password != obj.confirmPassword) {
+                alert('Password Not Matched')
+            }
+            else {
+               $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'post',
+                   url: '@Url.Action("RegisterNewUser", "Auth")',
+                   data: JSON.stringify(obj),
+                    success: function (res) {
+                        if (res.success) {
+                            alert(res.message)
+                            window.location.href = '@Url.Action("Login","Auth")';
+                        } else {
+                            alert(res.message);
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        //$.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        //$.unblockUI();
+                    }
+                });
+            }
+        });
+
+
+
+        function loadDropDown() {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetUserGroupData", "Auth")',
+               
+                success: function (res) {
+                    debugger;
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value="' + x.userGroupID + '">' + x.userGroupName + '</option>';
+                    });
+                    $('.ddlUserGroup').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    // block ui
+                    //$.blockUI();
+                },
+                complete: function () {
+                    // unblock ui
+                    //$.unblockUI();
+                }
+            });
+        }
+
+    </script>
+
+
+</body>
+
+
+</html>

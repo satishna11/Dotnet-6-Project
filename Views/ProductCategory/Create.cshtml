@@ -1,0 +1,274 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Table</h3>
+                    <button type="button" class="btn btn-success btnNew" style="float:right;">
+                        <i class="fa fa-plus"></i> NEW
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>SN</th>
+                                <th>ProductCategory Name</th>
+                                <th>ProductCategory Code</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="data-body">
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Product Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form">
+                                <label>ProductCategory Name</label>
+                                <input type="text" class="form-control txtProductCategoryName" />
+                                <input type="hidden" class="hdnProductCategoryId" value="0" />
+                            </div>
+                            <div class="form">
+                                <label>ProductCategory Code</label>
+                                <input type="text" class="form-control txtProductCategoryCode" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btnSubmit">Submit</button>
+                <button type="button" class="btn btn-danger btnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var saveUrl = '@Url.Action("SaveData", "ProductCategory")';
+        var getDataUrl = '@Url.Action("GetData", "ProductCategory")';
+        var deleteUrl = '@Url.Action("DeleteData", "ProductCategory")';
+        var getByIdUrl = '@Url.Action("GetById", "ProductCategory")'
+            $(document).ready(function () {
+            //$('.dtTable').DataTable();
+            loadData();
+
+        });
+        $(document).on('click', '.btnNew', function () {
+            $('#exampleModal').modal('show');
+        });
+
+        $(document).on('click', '#btnSubmit', function () {
+
+            var ProductCategoryName = $('.txtProductCategoryName').val();
+            var ProductCategoryCode = $('.txtProductCategoryCode').val();
+            var ProductCategoryId = $('.hdnProductCategoryId').val();
+            if (ProductCategoryName == '') {
+                showToast('Stop', 'Enter User ProductCategory Name', 'error');
+            } else if (ProductCategoryCode == '') {
+                showToast('Stop', 'Enter User ProductCategory Code', 'error');
+            } else {
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'get',
+                    url: saveUrl + '?ProductCategoryname=' + ProductCategoryName + '&ProductCategorycode=' + ProductCategoryCode + '&ProductCategoryID=' + ProductCategoryId,
+                    success: function (res) {
+                        if (res.success) {
+                            toastr["success"](res.message, "!!!")
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+                            loadData();
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+                });
+
+            }
+
+        });
+
+        $(document).on('click', '.btnCancel', function () {
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to clear form?',
+                buttons: {
+                    confirm: function () {
+                        clearForm();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+        function loadData() {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: getDataUrl,
+                success: function (res) {
+                    debugger;
+                    var xyz = '';
+
+                    $.each(res, function (i, x) {
+                        xyz += '<tr>';
+                        xyz += '<td>' + (i + 1) + '</td>';
+                        xyz += '<td>' + x.categoryName + '</td>';
+                        xyz += '<td>' + x.categoryCode + '</td>';
+                        xyz += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key=' + x.productCategoryID + '><i class="fa fa-edit" ></i> EDIT</button>'
+                        xyz += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key=' + x.productCategoryID + '><i class="fa fa-trash"></i> DELETE</button></td>';
+                        xyz += '</tr>';
+                    });
+
+                    $('.data-body').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+        $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: function () {
+                        deleteData($(btn).data("key"));
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+        $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data("key");
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: getByIdUrl + '?id=' + id,
+                success: function (data) {
+                    
+                    var res = JSON.parse(data.message);
+
+                    // Ensure that `res` is an array and that it has at least one element.
+                    if (data.success && res.length > 0) {
+                        // Access the first object in the array
+                        var category = res[0];
+
+                        $('#exampleModal').modal('show');
+                        $('.txtProductCategoryName').val(category.CategoryName);
+                        $('.txtProductCategoryCode').val(category.CategoryCode);
+                        $('.hdnProductCategoryId').val(category.ProductCategoryID);
+                    }
+                    else {
+                        toastr["error"](res.message, "!!!")
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    // block ui
+                    $.blockUI();
+                },
+                complete: function () {
+                    // unblock ui
+                    $.unblockUI();
+                }
+
+
+            });
+
+
+        })
+
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "ProductCategory")?ProductCategoryid=' + id,
+                success: function (res) {
+                    debugger;
+                    if (res.success) {
+                        toastr["success"](res.message, "!!!")
+                        loadData();
+                    }
+                    else {
+                        toastr["error"](res.message, "!!!")
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    // block ui
+                    $.blockUI();
+                },
+                complete: function () {
+                    // unblock ui
+                    $.unblockUI();
+                }
+
+
+            });
+        }
+
+        function clearForm() {
+            $('.txtProductCategoryName').val('');
+            $('.txtProductCategoryCode').val('');
+            $('.hdnProductCategoryId').val('');
+        }
+
+
+    </script>
+
+}

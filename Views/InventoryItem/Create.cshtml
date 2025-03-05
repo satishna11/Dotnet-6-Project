@@ -1,0 +1,358 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<div class="row">
+    <div class="col-md-12 mt-4">
+        <div class="card">
+            <div class="card-header">
+                <button type="button" class="btn btn-success btnNew" style="float:right;">
+                    <i class="fa fa-plus"></i> NEW
+                </button>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover dtTable">
+                    <thead>
+                        <tr>
+                            <th>SN</th>
+                            <th>Item Name</th>
+                            <th>Item Code</th>
+                            <th>Product Category</th>
+                            <th>Minimum alert Qty</th>
+                            <th>smallest unit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="data-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Inventory Items </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form">
+                                <label>Item Name</label>
+                                <input type="text" class="form-control txtItemName" />
+                                <input type="hidden" class="form-control hdnItemId" value="0" />
+                            </div>
+                            <div class="form">
+                                <label>Item Code</label>
+                                <input type="text" class="form-control txtItemCode" />
+                            </div>
+                            <div class="form ">
+                                <label for="Product Category">Product Category</label>
+                                <select class="form-control ddlProductCategory">
+                                </select>
+                            </div>
+                            <div class="form ">
+                                <label>Minimum alert Quantity</label>
+                                <input type="number" class="form-control minQty" />
+                            </div>
+                            <div class="form ">
+                                <label for="Product Category">Smallest Unit</label>
+                                <select class="form-control ddlSmallestUnit">
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btnSubmit" id="btnSubmit">Submit</button>
+                <button type="button" class="btn btn-danger btnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            loadData();
+            getProductCategory();
+            getSmallestUnit();
+        });
+
+        $(document).on('click', '.btnNew', function () {
+
+            $('#exampleModal').modal('show')
+        });
+        $(document).on('click', '.btnSubmit', function () {
+            var obj = {
+                InventoryItemsId: +$('.hdnItemId').val(),
+                ItemName: $('.txtItemName').val(),
+                ItemCode: $('.txtItemCode').val(),
+                ProductCategoryID: +$('.ddlProductCategory').val(),
+                MinAlertQty: +$('.minQty').val(),
+                SmallestUnitID: +$('.ddlSmallestUnit').val()
+            }
+
+            if (obj.itemName == '') {
+                console.log("invalid name");
+                toastr["error"]("Enter item name", "!!!");
+            }
+            else if (obj.itemCode == '') {
+                showToast("Stop", "enter item code", "error");
+            }
+            else if (obj.productCategory == '' || obj.productCategory == 0) {
+                showToast("Stop", "enter item code", "error");
+            }
+            else if (obj.minimumAlertQty == '') {
+                showToast("Stop", "enter item code", "error");
+            }
+            else if (obj.itemCode == '') {
+                showToast("Stop", "enter item code", "error");
+            }
+            else if (obj.smallestUnit == '' || obj.smallestUnit == 0) {
+                showToast("Stop", "enter item code", "error");
+            }
+            else {
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'post',
+                    url: '@Url.Action("SaveData", "InventoryItem")',
+                    data: JSON.stringify(obj),
+                    success: function (res) {
+                        if (res.success) {
+                            showToast("!!!", res.message, "success");
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+                            loadData();
+                        } else {
+                            toastr["error"](res.message, "!!!")
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+
+
+                })
+
+            }
+
+        });
+
+        $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data('key');
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetByID", "InventoryItem")?id=' + id,
+                success: function (res) {
+
+                    if (res.success) {
+                        $('#exampleModal').modal('show');
+                        $('.txtItemName').val(res.data.itemName);
+                        $('.txtItemCode').val(res.data.itemCode);
+                        $('.ddlProductCategory').val(res.data.productCategoryID);
+                        $('.minQty').val(res.data.minAlertQty);
+                        $('.ddlSmallestUnit').val(res.data.smallestUnitID);
+                        $('.hdnItemId').val(res.data.inventoryItemsId);
+                    } else {
+                        toastr["error"](res.message, "!!!")
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        });
+
+        $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: () => {
+                        var id = $(btn).data('key')
+                        deleteData(id);
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        })
+
+        function loadData() {
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "InventoryItem")',
+                success: function (res) {
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<tr>';
+                        xyz += '<td>' + (i + 1) + '</td>';
+                        xyz += '<td>' + x.itemName + '</td>';
+                        xyz += '<td>' + x.itemCode + '</td>';
+                        xyz += '<td>' + x.productCategoryName + '</td>';
+                        xyz += '<td>' + x.minAlertQty + '</td>';
+                        xyz += '<td>' + x.smallestUnitName + '</td>';
+                        xyz += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key="' + x.inventoryItemsId + '"><i class="fa fa-edit"></i> EDIT</button>';
+                        xyz += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key="' + x.inventoryItemsId + '"> <i class="fa fa-trash"></i> DELETE</button ></td > ';
+                        xyz += '</tr>';
+                    });
+
+                    $('.data-body').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+
+        }
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "InventoryItem")?id=' + id,
+                success: function (res) {
+                    if (res.success) {
+                        toastr["success"](res.message, "!!!")                        
+                        loadData();
+
+                    } else {
+                        toastr["error"](res.message, "!!!")
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+        function clearForm() {
+            $('.hdnItemId').val('0');
+            $('.txtItemName').val('');
+            $('.txtItemCode').val('');
+            $('.ddlProductCategory').val('0');
+            $('.minQty').val('');
+            $('.ddlSmallestUnit').val('0');
+
+        }
+        $(document).on('click', '.btnCancel', function () {
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to clear form?',
+                buttons: {
+                    confirm: function () {
+                        clearForm();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+        function getProductCategory() {
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "ProductCategory")',
+                success: function (res) {
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value = ' + x.productCategoryID + '>' + x.categoryName + '</option>';
+                    });
+
+                    $('.ddlProductCategory').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+        }
+
+
+        function getSmallestUnit() {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "Unit")',
+                success: function (response) {
+                    res = JSON.parse(response.message)
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<option value = ' + x.UnitID + '>' + x.UnitName + '</option>';
+                    });
+
+                    $('.ddlSmallestUnit').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+        }
+
+    </script>
+
+}
+

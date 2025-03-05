@@ -1,0 +1,304 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_layout";
+}
+
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="col-md-3">
+                        <label>Tax Name</label><br />
+                        <input type="text" class="form-control txtTaxfilterName" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Tax Code</label><br />
+                        <input type="text" class="form-control txtTaxfilterCode" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Tax Percent</label><br />
+                        <input type="text" class="form-control txtTaxfilterPercent" />
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <button type="button" class="btn btn-primary btnSearch ml-2 mt-2" style="float:right;">
+                            <i class="fa fa-search"></i> SEARCH
+                        </button>
+
+                        <button type="button" class="btn btn-success btnNew mt-2" style="float:right; ">
+                            <i class="fa fa-plus"></i> NEW
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">S.N.</th>
+
+                                <th scope="col">Tax Name</th>
+                                <th scope="col">Tax Code</th>
+                                <th scope="col">Percent</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="data-body">
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tax Setup Page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form">
+                                    <label>Tax Name</label>
+                                    <input type="text" class="form-control txtTaxName" />
+                                    <input type="hidden" class="hdnTaxID" value="0" />
+                                </div>
+                                <div class="form">
+                                    <label>Tax Code</label>
+                                    <input type="text" class="form-control txtTaxCode" />
+                                </div>
+                                <div class="form">
+                                    <label>Tax Percent</label>
+                                    <input type="number" class="form-control txtTaxPercent" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btnSubmit">Submit</button>
+                    <button type="button" class="btn btn-danger btnCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+@section Scripts{
+    <script>$(document).ready(function () {
+            loadData();
+        });
+        $(document).on('click', '.btnNew', function () {
+            $('#exampleModal').modal('show')
+        });
+
+
+
+        $(document).on('click', '.btnSubmit', function () {
+            var tname = $('.txtTaxName').val();
+            var tcode = $('.txtTaxCode').val();
+            var tpercent = $('.txtTaxPercent').val();
+            var id = $('.hdnTaxID').val();
+
+            if (tname == '') {
+                toastr["error"]("I cannot proceed forward", "Please enter your name :)");
+            } else if (tcode == '') {
+                toastr["error"]("Do I have to remind you to enter code also", "Please kindly fill all the form (:");
+            } else if (tpercent == '') {
+                toastr["error"]("Enough!!!", "Please  fill  this percent too");
+            }
+            else {
+
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'get',
+                    url: '@Url.Action("SaveData", "Tax")?id='+id+'&taxname=' + tname + '&taxcode=' + tcode +'&taxpercent='+tpercent,
+                    success: function (res) {
+
+                        if (res.success) {
+                            toastr["success"]("Resource updated successfully.", "Success");
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+                        }
+                        else {
+                            toastr["success"]("Resource not updated ", "error");
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+                });
+            }
+        });
+         $(document).on('click', '.btnCancel', function () {
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to clear form?',
+                buttons: {
+                    confirm: function () {
+                        clearForm();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+        function loadData() {
+            var taxName = $('.txtTaxfilterName').val() || '';
+            var taxCode = $('.txtTaxfilterCode').val() || '';
+            var taxPercent = $('.txtTaxfilterPercent').val() || '';
+              $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'get',
+                  url: '@Url.Action("GetData", "Tax")?txName=' + taxName + '&txCode=' + taxCode + '&txPercent=' + taxPercent,
+                  success: function (res) {
+
+                        var dt = '';
+                        $.each(res, function (i, x) {
+                            dt += '<tr>';
+                            dt += '<td>' + (i + 1) + '</td>';
+
+                            dt += '<td>' + x.taxName + '</td>';
+                            dt += '<td>' + x.taxCode + '</td>';
+                            dt += '<td>' + x.percent+ '</td>';
+                            dt += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key="' + x.taxID + '"><i class="fa fa-edit"></i> EDIT</button>';
+                            dt += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key="' + x.taxID + '"> <i class="fa fa-trash"></i> DELETE</button ></td > ';
+                            dt += '</tr>';
+                        });
+
+                        $('.data-body').html(dt);
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        $.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        $.unblockUI();
+                    }
+                });
+        }
+
+
+
+        function clearForm() {
+            $('.txtTaxName').val('');
+            $('.txtTaxCode').val('');
+            $('.txtTaxPercent').val('');
+            $('.hdnTaxID').val('0');
+        }
+        $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data('key');
+
+
+
+
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetByID", "Tax")?id='+id,
+                success: function (res) {
+
+                    if (res.success) {
+                         $('#exampleModal').modal('show');
+                         $('.txtTaxName').val(res.data.taxName);
+                        $('.txtTaxCode').val(res.data.taxCode);
+                        $('.txtTaxPercent').val(res.data.percent);
+                        $('.hdnTaxID').val(res.data.taxID);
+                    } else {
+                        toastr("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        });
+         $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+
+
+
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: () => {
+                        var id = $(btn).data('key')
+                        deleteData(id);
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+
+
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "Tax")?txID='+id,
+                success: function (res) {
+                    if (res.success) {
+                        //toastr("!!!", res.message, "success");
+                        alert("delete");
+                        loadData();
+                    }
+                    //} else {
+                    //    toastr("!!!", res.message, "error");
+                    //}
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+
+        $(document).on('click', '.btnSearch', function () {
+            loadData();
+        });
+
+
+    </script>
+}

@@ -1,0 +1,306 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Full Name</label><br />
+                        <input type="text" class="form-control txtFilterFullName" />
+                    </div>
+                    <div class="col-md-3">
+                        <label>Email</label><br />
+                        <input type="text" class="form-control txtFilterEmail" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>contact</label><br />
+                        <input type="text" class="form-control txtFilterContact" />
+                    </div>
+                    
+                    <div class="col-md-34">
+                        <br />
+                        <button type="button" class="btn btn-primary btn-sm btnSearch ml-2">
+                            <i class="fa fa-search"></i> SEARCH
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm btnNew" style="float:right;">
+                            <i class="fa fa-plus"></i> NEW
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover dtTable">
+                    <thead>
+                        <tr>
+                            <th>SN</th>
+                            <th>FullName</th>
+                            <th>Email</th>
+                            <th>Contact</th>
+                            <th>Vat</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="data-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Vendor Setup Page</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="form-group col-md-6">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control txtFullName" />
+                        <input type="hidden" class="form-control hdnVendorId" value="0" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Email</label>
+                        <input type="email" class="form-control txtEmail" />
+                    </div>
+
+                    <div class="formgroup col-md-6 ">
+                        <label>Contact</label>
+                        <input type="tel" class="form-control Contact" />
+                    </div>
+                    <div class="formgroup col-md-6 ">
+                        <label>VAT</label>
+                        <input type="text" class="form-control VAT" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btnSubmit" id="btnSubmit">Submit</button>
+                <button type="button" class="btn btn-danger btnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadData();
+        });
+
+        $(document).on('click', '.btnNew', function () {
+
+            $('#exampleModal').modal('show');
+        });
+
+        $(document).on('click', '.btnSubmit', function () {
+
+            var obj = {
+                VendorId: +$('.hdnVendorId').val(),
+                FullName: $('.txtFullName').val(),
+                Email: $('.txtEmail').val(),
+                Contact: $('.Contact').val(),
+                VAT: $('.VAT').val()
+
+            }
+            if (obj.fullName == '') {
+                showToast("Stop", "please enter Vendor name", "error");
+            }
+            else if (obj.email == '') {
+                showToast("Stop", "please enter email", "error");
+            }
+            else if (obj.contact == '') {
+                showToast("Stop", "please enter contact", "error");
+            }
+            else if (obj.VAT == '') {
+                showToast("Stop", "please enter VAT", "error");
+
+            }
+            else {
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    method: 'post',
+                    url: '@Url.Action("SaveData", "Vendor")',
+                    data: JSON.stringify(obj),
+                    success: function (res) {
+                        if (res.success) {
+                            showToast("!!!", res.message, "success");
+                            clearForm();
+                            $('#exampleModal').modal('hide');
+                            loadData();
+                        } else {
+                            showToast("!!!", res.message, "error");
+                        }
+                    },
+                    error: function (e) {
+                        console.log(e);
+                    },
+                    beforeSend: function () {
+                        // block ui
+                        //$.blockUI();
+                    },
+                    complete: function () {
+                        // unblock ui
+                        //$.unblockUI();
+                    }
+
+
+                });
+            }
+        });
+
+        $(document).on('click', '.btnEdit', function () {
+            var btn = $(this);
+            var id = $(this).data('key');
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetByID", "Vendor")?id=' + id,
+                success: function (res) {
+
+                    if (res.success) {
+                        $('#exampleModal').modal('show');
+                        $('.txtFullName').val(res.data.fullname);
+                        $('.txtEmail').val(res.data.email);
+                        $('.Contact').val(res.data.contact);
+                        $('.VAT').val(res.data.vat);
+                        $('.hdnVendorId').val(res.data.vendorId);
+                    } else {
+                        showToast("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+        });
+
+        $(document).on('click', '.btnDelete', function () {
+            var btn = $(this);
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to delete?',
+                buttons: {
+                    confirm: () => {
+                        var id = $(btn).data('key')
+                        deleteData(id);
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        })
+
+
+        function deleteData(id) {
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("DeleteData", "Vendor")?id=' + id,
+                success: function (res) {
+                    if (res.success) {
+                        showToast("!!!", res.message, "success");
+                        loadData();
+
+                    } else {
+                        showToast("!!!", res.message, "error");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+        }
+
+
+        function clearForm() {
+            $('.hdnVendorId').val('0');
+            $('.txtFullName').val('');
+            $('.txtEmail').val('');
+            $('.Contact').val('');
+            $('.VAT').val('');
+        }
+
+        function loadData() {
+            var fullName = $('.txtFilterFullName').val() || '';
+            var email = $('.txtFilterEmail').val() || '';
+            var contact = $('.txtFilterContact').val() || '';
+            var VAT = $('.txtFilterVAT').val() || '';
+            $.ajax({
+                contentType: "application/json; charset=utf-8",
+                method: 'get',
+                url: '@Url.Action("GetData", "Vendor")?fullName=' + fullName + '&email=' + email + '&conatct=' + contact + '&VAT=' + VAT,
+                success: function (res) {
+                    var xyz = '';
+                    $.each(res, function (i, x) {
+                        xyz += '<tr>';
+                        xyz += '<td>' + (i + 1) + '</td>';
+                        xyz += '<td>' + x.fullname + '</td>';
+                        xyz += '<td>' + x.email + '</td>';
+                        xyz += '<td>' + x.contact + '</td>';
+                        xyz += '<td>' + x.vat + '</td>';
+                        xyz += '<td><button type="button" class="btn btn-secondary btn-sm btnEdit" data-key="' + x.vendorId + '"><i class="fa fa-edit"></i> EDIT</button>';
+                        xyz += '<button type="button" class="btn btn-danger btn-sm ml-2 btnDelete" data-key="' + x.vendorId + '"> <i class="fa fa-trash"></i> DELETE</button ></td > ';
+                        xyz += '</tr>';
+                    });
+
+                    $('.data-body').html(xyz);
+                },
+                error: function (e) {
+                    console.log(e);
+                },
+                beforeSend: function () {
+                    $.blockUI();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+        $(document).on('click', '.btnCancel', function () {
+            $.confirm({
+                title: 'Confirm!',
+                type: 'red',
+                content: 'Are you sure to clear form?',
+                buttons: {
+                    confirm: function () {
+                        clearForm();
+                    },
+                    cancel: function () {
+
+                    },
+                }
+            });
+        });
+
+        $(document).on('click', '.btnSearch', function () {
+            loadData();
+        })
+
+
+    </script>
+}
