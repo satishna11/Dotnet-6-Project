@@ -392,3 +392,4 @@
 /Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory_re.pdb
 /Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory_re.genruntimeconfig.cache
 /Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/ref/inventory_re.dll
+/Users/satishnashakya/Projects/inventory re/inventory re/obj/Debug/net6.0/inventory_re.sourcelink.json

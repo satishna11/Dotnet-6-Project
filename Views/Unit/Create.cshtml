@@ -128,7 +128,7 @@
 
                             loadData();
                         } else {
-                            showToast("!!!", res.message, "error");
+                            toastr.error(res.message, "!!!");
                         }
                     },
                     error: function (e) {
@@ -210,7 +210,7 @@
 
         $(document).on('click', '.btnDelete', function () {
             var btn = $(this);
-
+            var id = $(this).data('key');
 
 
             $.confirm({
@@ -235,14 +235,14 @@
             $.ajax({
                 contentType: "application/json; charset=utf-8",
                 method: 'get',
-                url: '@Url.Action("DeleteData", "Unit")?UnitID='+id,
+                url: '@Url.Action("DeleteData", "Unit")?id='+id,
                 success: function (res) {
                     if (res.success) {
-                        showToast("!!!", res.message, "success");
+                        toastr.success(res.message, "!!!");
                         loadData();
 
                     } else {
-                        showToast("!!!", res.message, "error");
+                        toastr.error(res.message, "!!!");
                     }
                 },
                 error: function (e) {
@@ -268,15 +268,17 @@
             $.ajax({
                 contentType: "application/json; charset=utf-8",
                 method: 'get',
-                url: '@Url.Action("GetByID", "Unit")?id='+id,
+                url: '@Url.Action("GetDataById", "Unit")?id='+id,
                 success: function (res) {
                     if (res.success) {
-                         $('#exampleModal').modal('show');
-                         $('.txtUnitName').val(res.data.UnitName);
-                        $('.txtUnitCode').val(res.data.UnitCode);
-                        $('.hdnUnitID').val(res.data.UnitID);
+                        $('#exampleModal').modal('show');
+                        debugger
+                         $('.hdnUnitID').val(res.data.unitID);
+                        $('.txtUnitName').val(res.data.unitName);
+                        $('.txtUnitCode').val(res.data.unitCode);
+                       
                     } else {
-                        showToast("!!!", res.message, "error");
+                        toastr.error(res.message, "!!!");
                     }
                 },
                 error: function (e) {
